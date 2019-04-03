@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 
 <html lang = "en">
   <head>
-    <title>Courses</title>
+    <title>Select Courses</title>
     <meta charset = "utf-8" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script>
@@ -48,7 +48,7 @@ if ($conn->connect_error) {
     <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
 
   </head>
-  <body style = "font-size: 1.7em;">
+  <body style = "font-size: 1.7em; margin: 50px">
     <form id="departmentsForm" method="POST" onchange="submit()">
 	  <select id="departments" name="departments">
 	  <?php $query = "SELECT * FROM Department";
@@ -115,6 +115,7 @@ if ($conn->connect_error) {
       $result->free();
     }
   ?>
+  <br>
   <input id="submit" type="submit" value="Complete Registration" disabled></input>
   </form>
   </body>

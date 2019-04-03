@@ -1,6 +1,6 @@
 <html lang = "en">
   <head>
-    <title>Courses</title>
+    <title>Registration Confirmatio</title>
     <meta charset = "utf-8" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script>
@@ -32,7 +32,7 @@
     <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
 
   </head>
-  <body style = "font-size: 1.7em;">
+  <body style = "font-size: 1.7em; margin: 50px">
 <?php
 $servername = "localhost";
 $username = "root";
@@ -53,7 +53,7 @@ $totalCredits = 0;
 echo "You have registered for the following courses: <br><br>";
 
  echo '<table class="table">
-	   <tr><th>Course</th><th>Number</th><th>CRN</th><th>Department</th>
+	   <tr><th></th><th>Course</th><th>Number</th><th>CRN</th><th>Department</th>
 	   <th>Credits</th><th>Start Date</th><th>EndDate</th><th>Days</th><th>Start Time</th><th>End Time</th></tr>';
 
 foreach( $courseCRNs as $courseCRN ) {
@@ -76,7 +76,7 @@ foreach( $courseCRNs as $courseCRN ) {
 				  
 				  $totalCredits = $totalCredits + $courseCredits;
 				  
-				  echo '<tr><td>'.$courseName.'</td><td>'.$courseNumber.'</td><td>'.$courseCRN.'</td>
+				  echo '<tr><td><input type="checkbox"></td><td>'.$courseName.'</td><td>'.$courseNumber.'</td><td>'.$courseCRN.'</td>
 				  <td>'.$courseDepartmentId.'</td><td>'.$courseCredits.'</td><td>'.$courseStartDate.'</td><td>'.$courseEndDate.'</td>
 				  <td>'.$courseDays.'</td><td>'.$courseStartTime.'</td><td>'.$courseEndTime.'</td></tr>';
 				  
@@ -93,12 +93,19 @@ foreach( $courseCRNs as $courseCRN ) {
 			}
 }
 
+$totalDue = $totalCredits*300;
 echo '</table><br><br>';
 echo '<h3>Tuition: $300/credit</h3>
       <h3>Total Credits: '.$totalCredits.'</h3>
-	  <h3>Total due: $'.number_format($totalCredits*300,2).'</h3>';
+	  <h3>Total due: $'.number_format($totalDue,2).'</h3>';
+echo '</br>
+      <form action="makePayment.php" method="POST">
+      <input id="totalDue" name="totalDue" type="hidden" value="'.$totalDue.'">';
 ?>
-</br>
-<input type="submit" value="Continue to payment">
+
+<input type="submit" value="Continue to payment">&nbsp&nbsp
+</form>
+<button onclick="window.location='course_selection.php'">Edit Courses</a></button>&nbsp&nbsp
+<input type="submit" value="Return to Home">
 </body>
 </html>
