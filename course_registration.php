@@ -83,6 +83,7 @@ if ($conn->connect_error) {
 if(isset($_POST['courses'])){
 	$courseCRNs = $_POST['courses'];
 	$totalCredits = 0;
+	$totalUnpaidCredits = 0;
 
 	foreach( $courseCRNs as $courseCRNJason ) {
 		
@@ -94,7 +95,7 @@ if(isset($_POST['courses'])){
 				  while ($row = $courseResult->fetch_assoc()) {
 					  
 					  $query = 'INSERT INTO StudentCourse
-								VALUES (2,'.$courseCRN.')'; // change 11111 to variable for student id
+								VALUES (2,'.$courseCRN.',0)'; // change 11111 to variable for student id
 								
 					  $conn->query($query);
 				  }
@@ -112,9 +113,10 @@ echo "You have registered for the following courses: <br><br>";
  echo '<form action="delete_student_course.php" method="POST">
 		   <table class="table">
 		   <tr><th></th><th>Course</th><th>Number</th><th>CRN</th><th>Department</th>
-		   <th>Credits</th><th>Start Date</th><th>EndDate</th><th>Days</th><th>Start Time</th><th>End Time</th></tr>';
+		   <th>Credits</th><th>Start Date</th><th>EndDate</th><th>Days</th><th>Start Time</th><th>End Time</th>
+		   <th>Paid</th></tr>';
 
-$query = "SELECT Course.* 
+$query = "SELECT Course.* , StudentCourse.Paid
           FROM Course, StudentCourse, users 
 		  WHERE users.id = 2
 			AND users.id = StudentCourse.StudentID
@@ -133,30 +135,47 @@ $query = "SELECT Course.*
 				  $courseEndDate = $row["EndDate"];
 				  $courseDays = $row["Days"]; 
 				  $courseStartTime = $row["StartTime"]; 
-				  $courseEndTime = $row["EndTime"]; 
+				  $courseEndTime = $row["EndTime"];
+			      $coursePaid = ($row["Paid"] == '1') ? "Yes" : "No";
 				  
 				  $totalCredits = $totalCredits + $courseCredits;
+				  $totalUnpaidCredits = ($row["Paid"] == '0') ? ($totalUnpaidCredits + $courseCredits) : $totalUnpaidCredits;
 				  
-				  echo '<tr><td><input type="checkbox" value="'.$courseCRN.'" name="deletedStudentCourses[]" onchange="checkIfChecked()"></td>
-				  <td>'.$courseName.'</td><td>'.$courseNumber.'</td><td>'.$courseCRN.'</td>
-				  <td>'.$courseDepartmentId.'</td><td>'.$courseCredits.'</td><td>'.$courseStartDate.'</td>
-				  <td>'.$courseEndDate.'</td><td>'.$courseDays.'</td><td>'.$courseStartTime.'</td><td>'.$courseEndTime.'</td></tr>';
+				  if($row["Paid"] == '0')
+					echo '<tr><td><input type="checkbox" value="'.$courseCRN.'" name="deletedStudentCourses[]" onchange="checkIfChecked()"></td>';
+				  else
+					echo '<tr><td></td>';
+				
+				  echo
+				  '<td>'.$courseName.'</td><td>'.$courseNumber.'</td><td>'.$courseCRN.'</td>
+				   <td>'.$courseDepartmentId.'</td><td>'.$courseCredits.'</td><td>'.$courseStartDate.'</td>
+				   <td>'.$courseEndDate.'</td><td>'.$courseDays.'</td><td>'.date("g:i A", strtotime($courseStartTime)).'</td>
+				   <td>'.date("g:i A", strtotime($courseEndTime)).'</td><td>'.$coursePaid.'</tr>';
 			  }
 		  }
 
-$totalDue = $totalCredits*300;
+$totalDue = $totalUnpaidCredits*300;
+
+if($totalDue > 0)
+	setcookie("paid",0);
+else
+	setcookie("paid",1);
+
 echo '	</table>
       <input id="delete" type="submit" value="Delete Courses" disabled></input><br><br>
       </form>';
 echo '<h3>Tuition: $300/credit</h3>
-      <h3>Total Credits: '.$totalCredits.'</h3>
+      <h3>Total credits: '.$totalCredits.'</h3>
+	  <h3>Total unpaid credits: '.$totalUnpaidCredits.'</h3>
 	  <h3>Total due: $'.number_format($totalDue,2).'</h3>';
 echo '</br>
       <form action="makePayment.php" method="POST">
       <input id="totalDue" name="totalDue" type="hidden" value="'.$totalDue.'">';
+
+	  if($totalDue > 0)
+         echo '<input type="submit" value="Continue to payment">';
 ?>
 
-<input type="submit" value="Continue to payment">&nbsp&nbsp
 </form>
 </div>
 </body>
