@@ -46,6 +46,11 @@
                 <a class="nav-link active" href="course_recommendation.php">Recommended Courses</a>
               </li>
             </ul>
+			<ul class="navbar-nav absolute-right">
+              <li>
+                <a href="logout.php">Logout</a>
+              </li>
+            </ul>
             
           </div>
         </div>

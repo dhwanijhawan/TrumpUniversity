@@ -74,9 +74,11 @@ require_once "config.php";
                 <a class="nav-link" href="course_recommendation.php">Recommended Courses</a>
               </li>
             </ul>
-            <li class="nav-item">
-              <a class="nav-link active" href="logout.php">logout</a>
-            </li>
+			<ul class="navbar-nav absolute-right">
+              <li>
+                <a href="logout.php">Logout</a>
+              </li>
+            </ul>
             
           </div>
         </div>

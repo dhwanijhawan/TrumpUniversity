@@ -1,6 +1,16 @@
+<?php
+session_start();
+if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+ $studentUser = $_SESSION["username"];
+}
+else{
+	header("location: login.php");
+    exit;
+}
+?>
 <html lang = "en">
   <head>
-    <title>Registration Confirmatio</title>
+    <title>Your Courses</title>
     <meta charset = "utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -60,6 +70,11 @@
                 <a class="nav-link active" href="course_recommendation.php">Recommended Courses</a>
               </li>
             </ul>
+			<ul class="navbar-nav absolute-right">
+              <li>
+                <a href="logout.php">Logout</a>
+              </li>
+            </ul>
             
           </div>
         </div>
@@ -80,6 +95,14 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$query = "SELECT * FROM users WHERE username='".$studentUser."'";
+			  
+	if ($userResult = $conn->query($query)) {
+		while ($row = $userResult->fetch_assoc()) {
+			$studentUserId = $row["id"];
+		}
+	}
+
 if(isset($_POST['courses'])){
 	$courseCRNs = $_POST['courses'];
 	$totalCredits = 0;
@@ -88,27 +111,27 @@ if(isset($_POST['courses'])){
 	foreach( $courseCRNs as $courseCRNJason ) {
 		
 		$courseCRN = json_decode($courseCRNJason)[0];
-				$query = "SELECT * FROM Course WHERE CRN='".$courseCRN."'";
-				if ($courseResult = $conn->query($query)) {
-					
-				  /* fetch associative array */
-				  while ($row = $courseResult->fetch_assoc()) {
+		
+		$query = "SELECT * FROM Course WHERE CRN='".$courseCRN."'";
+			if ($courseResult = $conn->query($query)) {
 					  
-					  $query = 'INSERT INTO StudentCourse
-								VALUES (2,'.$courseCRN.',0)'; // change 11111 to variable for student id
-								
-					  $conn->query($query);
-				  }
-				  
-				  //echo '</table>';
-			 
-				  /* free result set */
-				  $courseResult->free();
+				/* fetch associative array */
+				while ($row = $courseResult->fetch_assoc()) {
+						  
+					$query = 'INSERT INTO StudentCourse
+							  VALUES ('.$studentUserId.','.$courseCRN.',0)';
+										
+					$conn->query($query);
 				}
+			 
+				/* free result set */
+				$courseResult->free();
+			}
 	}
 }
 
-echo "You have registered for the following courses: <br><br>";
+echo "<h1>Your Courses</h1>
+      <h3>You have registered for the following courses:<h3><br>";
 
  echo '<form action="delete_student_course.php" method="POST">
 		   <table class="table">
@@ -118,7 +141,7 @@ echo "You have registered for the following courses: <br><br>";
 
 $query = "SELECT Course.* , StudentCourse.Paid
           FROM Course, StudentCourse, users 
-		  WHERE users.id = 2
+		  WHERE users.id = ".$studentUserId."
 			AND users.id = StudentCourse.StudentID
 			AND Course.CRN = StudentCourse.CourseID";
 		  

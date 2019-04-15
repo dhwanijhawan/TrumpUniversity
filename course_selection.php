@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <?php
+
 $servername = "localhost";
 $username = "root";
 $password = "mysql";
 $database ="TrumpUniversity";
+
+session_start();
+if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+ $studentUser = $_SESSION["username"];
+}
+else{
+	header("location: login.php");
+    exit;
+}
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
@@ -13,9 +23,17 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$query = "SELECT * FROM users WHERE username='".$studentUser."'";
+			  
+	if ($userResult = $conn->query($query)) {
+		while ($row = $userResult->fetch_assoc()) {
+			$studentUserId = $row["id"];
+		}
+	}
+
 $query = "SELECT Course.*
           FROM Course, StudentCourse, users 
-		  WHERE users.id = 2
+		  WHERE users.id = ".$studentUserId."
 			AND users.id = StudentCourse.StudentID
 			AND Course.CRN = StudentCourse.CourseID";
 		  
@@ -46,12 +64,11 @@ $query = "SELECT Course.*
 		  } 
 		  
 		  setcookie('courses',json_encode($courses));
-		  //setcookie('courses','hi');
 ?>
 
 <html lang = "en">
   <head>
-    <title>Select Courses</title>
+    <title>Add Courses</title>
     <meta charset = "utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	</style>
@@ -185,6 +202,11 @@ $query = "SELECT Course.*
                 <a class="nav-link active" href="course_recommendation.php">Recommended Courses</a>
               </li>
             </ul>
+			<ul class="navbar-nav absolute-right">
+              <li>
+                <a href="logout.php">Logout</a>
+              </li>
+            </ul>
             
           </div>
         </div>
@@ -196,6 +218,7 @@ $query = "SELECT Course.*
     <form id="departmentsForm" method="POST" onchange="submit()">
 	  <select id="departments" name="departments">
 	  <?php $query = "SELECT * FROM Department";
+	  echo $_SESSION["username"];
 		if ($result = $conn->query($query)) {
 	 
 	      echo '<option value="">-Select department-</option>';
@@ -269,8 +292,8 @@ $query = "SELECT Course.*
 		   echo "<tr><td><input type='checkbox' value='".json_encode($courseOption)."' name='courses[]' onchange='checkIfChecked()'></td>
 		             <td>".$courseOption[3]."</td><td>".$courseOption[2]."</td><td>".$courseOption[0]."</td>
 		             <td>".$courseOption[1]."</td><td>".$courseOption[4]."</td><td>".$courseOption[5]."</td>
-					 <td>".$courseOption[6]."</td><td>".$courseOption[7]."</td><td>".$courseOption[8]."</td>
-					 <td>".$courseOption[9]."</td>
+					 <td>".$courseOption[6]."</td><td>".$courseOption[7]."</td><td>".date("g:i A", strtotime($courseOption[8]))."</td>
+					 <td>".date("g:i A", strtotime($courseOption[9]))."</td>
 				</tr>";
       }
 	  
