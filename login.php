@@ -120,17 +120,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-
-          <div class="collapse navbar-collapse navbar-light" id="navbarsExample05">
-            <ul class="navbar-nav mx-auto">
-              <li class="nav-item">
-                <a class="nav-link active" href="index.html">Home</a>
-              </li>
-              
-              
-            
-            
-          </div>
         </div>
       </nav>
     </header>
@@ -164,6 +153,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <input type="submit" value="Login" class="btn btn-primary px-5 py-2">
                   </div>
                 </div>
+				<p>Don't have an account? <a href="register.php">Sign up here</a>.</p>
               </form>
             </div>
           </div>

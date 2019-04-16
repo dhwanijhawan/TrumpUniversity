@@ -1,3 +1,9 @@
+<?php 
+if(isset($_POST["totalDue"]) && $_POST["totalDue"] > 0)
+	setcookie("paid",0);
+else
+	setcookie("paid",1);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -96,8 +102,10 @@
         }).render('#paypal-button-container');
     </script>
 	
-	<?php if($_COOKIE["paid"] == "1")
-			echo "Paid";
+	<?php 
+	      sleep(1);
+	      if($_COOKIE["paid"] == "1")
+			echo "You have successfully paid your balance!";
 		  else
 			echo '<form action="submit_payment.php" id="submitPaymentForm" method="POST">
 					<input type="submit" value="Submit Payment"></input>

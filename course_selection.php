@@ -125,8 +125,8 @@ $query = "SELECT Course.*
 						if(noErrors == true) {
 							for(var oldCourseDay of oldCourseDays) {
 								if(newCourseDay == oldCourseDay){
-									if(((newCourseStartTime <= oldCourseStartTime) && (newCourseEndTime >= oldCourseEndTime)) ||
-									   ((newCourseStartTime >= oldCourseStartTime) && (newCourseEndTime <= oldCourseEndTime))) {
+									if(((newCourseStartTime <= oldCourseEndTime) && (newCourseEndTime >= oldCourseStartTime)) ||
+									   ((oldCourseStartTime <= newCourseEndTime) && (oldCourseEndTime >= newCourseStartTime))) {
 										   errors.push("Time conflict: " + newCourse[1] + " " + newCourse[2] +
 										   " and " + oldCourse[1] + " " + oldCourse[2]);
 										   noErrors = false;
@@ -227,8 +227,11 @@ $query = "SELECT Course.*
 		  while ($row = $result->fetch_assoc()) {
 			  $courseId = $row["ID"];
 			  $courseName = $row["Name"];
+			  
+			  //if(isset($_POST["departments"])
+				  $selected = ($courseId == $_POST["departments"]) ? "selected" : "";
 			
-			  echo '<option value="'.$courseId.'">'.$courseName.'</option>';
+			  echo '<option value="'.$courseId.'" '.$selected.'>'.$courseName.'</option>';
 		  }
 		  
 	 
@@ -270,7 +273,7 @@ $query = "SELECT Course.*
 		
 	   echo '<table class="table">
 	   <tr><th></th><th>Course</th><th>Number</th><th>CRN</th><th>Department</th>
-	   <th>Credits</th><th>Start Date</th><th>EndDate</th><th>Days</th><th>Start Time</th><th>End Time</th></tr>';	
+	   <th>Credits</th><th>Start Date</th><th>Days</th><th>Start Time</th><th>End Time</th></tr>';	
 	
       /* fetch associative array */
       while ($row = $result->fetch_assoc()) {
@@ -292,7 +295,7 @@ $query = "SELECT Course.*
 		   echo "<tr><td><input type='checkbox' value='".json_encode($courseOption)."' name='courses[]' onchange='checkIfChecked()'></td>
 		             <td>".$courseOption[3]."</td><td>".$courseOption[2]."</td><td>".$courseOption[0]."</td>
 		             <td>".$courseOption[1]."</td><td>".$courseOption[4]."</td><td>".$courseOption[5]."</td>
-					 <td>".$courseOption[6]."</td><td>".$courseOption[7]."</td><td>".date("g:i A", strtotime($courseOption[8]))."</td>
+					 <td>".$courseOption[7]."</td><td>".date("g:i A", strtotime($courseOption[8]))."</td>
 					 <td>".date("g:i A", strtotime($courseOption[9]))."</td>
 				</tr>";
       }

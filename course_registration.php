@@ -136,7 +136,7 @@ echo "<h1>Your Courses</h1>
  echo '<form action="delete_student_course.php" method="POST">
 		   <table class="table">
 		   <tr><th></th><th>Course</th><th>Number</th><th>CRN</th><th>Department</th>
-		   <th>Credits</th><th>Start Date</th><th>EndDate</th><th>Days</th><th>Start Time</th><th>End Time</th>
+		   <th>Credits</th><th>Start Date</th><th>Days</th><th>Start Time</th><th>End Time</th>
 		   <th>Paid</th></tr>';
 
 $query = "SELECT Course.* , StudentCourse.Paid
@@ -172,19 +172,19 @@ $query = "SELECT Course.* , StudentCourse.Paid
 				  echo
 				  '<td>'.$courseName.'</td><td>'.$courseNumber.'</td><td>'.$courseCRN.'</td>
 				   <td>'.$courseDepartmentId.'</td><td>'.$courseCredits.'</td><td>'.$courseStartDate.'</td>
-				   <td>'.$courseEndDate.'</td><td>'.$courseDays.'</td><td>'.date("g:i A", strtotime($courseStartTime)).'</td>
+				   <td>'.$courseDays.'</td><td>'.date("g:i A", strtotime($courseStartTime)).'</td>
 				   <td>'.date("g:i A", strtotime($courseEndTime)).'</td><td>'.$coursePaid.'</tr>';
 			  }
 		  }
 
 $totalDue = $totalUnpaidCredits*300;
 
-if($totalDue > 0)
+/*if($totalDue > 0)
 	setcookie("paid",0);
 else
-	setcookie("paid",1);
+	setcookie("paid",1);*/
 
-echo '	</table>
+echo '</table>
       <input id="delete" type="submit" value="Delete Courses" disabled></input><br><br>
       </form>';
 echo '<h3>Tuition: $300/credit</h3>
@@ -198,7 +198,6 @@ echo '</br>
 	  if($totalDue > 0)
          echo '<input type="submit" value="Continue to payment">';
 ?>
-
 </form>
 </div>
 </body>
